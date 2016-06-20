@@ -1,11 +1,11 @@
-﻿$date = Get-Date -Format dd.MM.yyyy 
+$date = Get-Date -Format dd.MM.yyyy 
 
-New-Item -Path "\\BACKUP-SERVER\SYSTEMSTATE\$data" -ItemType directory
-New-Item -Path "C:\LOG\SYSTEMSTATE\$data" -ItemType directory
+New-Item -Path "\\BACKUP-SERVER\SYSTEMSTATE\$date" -ItemType directory
+New-Item -Path "C:\LOG\SYSTEMSTATE\$date" -ItemType directory
 
-wbadmin start systemstatebackup -backupTarget:$backdir | Out-File C:\LOG\SYSTEMSTATE\$data\log-systemstate.txt
+wbadmin start systemstatebackup -backupTarget:\\BACKUP-SERVER\SYSTEMSTATE\$date | Out-File C:\LOG\SYSTEMSTATE\$date\log-systemstate.txt
 
-$filename = “C:\LOG\SYSTEMSTATE\$data\log-systemstate.txt”
+$filename = “C:\LOG\SYSTEMSTATE\$date\log-systemstate.txt”
 $smtpServer = “smtpserver.com.br”
 $msg = new-object Net.Mail.MailMessage
 $att = new-object Net.Mail.Attachment($filename)
