@@ -1,0 +1,55 @@
+#Backup files and folders into a network share 
+#Sources: 
+#http://redmondmag.com/Articles/2010/04/01/Backup-Basics-in-Windows-Server-2008-R2.aspx?Page=2 
+#http://richardspowershellblog.wordpress.com/2008/01/11/powershell-for-windows-server-backup/ 
+#http://technet.microsoft.com/en-us/library/ee706683.aspx 
+ 
+#Add powershell Windows Backup snap in into PowerShell environment 
+add-pssnapin windows.serverbackup 
+ 
+#Get date from the system 
+$date = Get-Date -Format dd.MM.yyyy 
+ 
+#Create a new policy backup 
+$policy = New-WBPolicy 
+ 
+#Specify a list of folders included into backup 
+$files=new-WBFileSpec S:\IISRoot,c:\Inetpub 
+ 
+#Add system state into the policy 
+Add-WBSystemState -Policy $policy 
+ 
+#Add folders / source folders into the policy 
+Add-wbFileSpec -policy $policy -filespec $files 
+ 
+#Declaring the backup target 
+$backdir=("\\backup-server\share-name\{0}\{1:ddMMyyyy_hhmmss}" -f $env:computername,(get-date)) 
+ 
+#Create backup folder into the network share 
+mkdir $backdir | out-null 
+ 
+#Declare backup location based on folder name 
+$backupLocation = New-WBBackupTarget -network $backdir  
+ 
+#Add backup location into the policy 
+Add-WBBackupTarget -Policy $policy -Target $backupLocation 
+ 
+ 
+#write-host "Backing up $files to $backdir" -foregroundcolor Green 
+#$policy 
+ 
+#Start backup procedure based on defined policy 
+Start-WBBackup -Policy $policy 
+ 
+#Send an e-mail message at the end of the backup procedure 
+#Email Variables  
+ $smtp = "smtp-server-name-or-ip"  
+ $from = "Name <support@dns.domain.com>"  
+ $to = "Valy Greavu <valy.greavu@outlook.com>"   
+ $body = "The backup operation has been successfully done! Date: $date"  
+ $subject = "Backup on $date"  
+ 
+#Send an Email to User   
+send-MailMessage -SmtpServer $smtp -From $from -To $to -Subject $subject -Body $body -BodyAsHtml  
+ 
+write-host "Backup Sucessfull"
