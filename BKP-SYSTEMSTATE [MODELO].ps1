@@ -14,7 +14,7 @@ $smtp.Credentials = New-Object Net.NetworkCredential(“exemplo@exemplo.com”, 
 $msg.From = “exemplo@exemplo.comr”
 $msg.To.Add(“exemplo@exemplo.com”)
 $date = get-date
-$msg.Subject = “BACKUP GPOS – $date”
+$msg.Subject = “BACKUP SYSTEMSTATE – $date”
 $msg.Body = “BACKUP DA SYSTEMSTATE CONCLUÍDO. VERIFIQUE O LOG EM ANEXO PARA CERTIFICAR QUE NÃO HOUVE ERRO.”
 $msg.Attachments.Add($att)
 $smtp.Send($msg)
