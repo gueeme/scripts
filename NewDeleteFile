@@ -1,0 +1,20 @@
+$path = "\\172.19.51.95\Teste\Arquivos"
+$days = 30
+$date = Get-Date -Format ddMMyyyy-HHmm
+
+$lista = gci $path -r | ? {$_.CreationTime -lt (get-date).AddDays(-$days)}
+
+"LISTA DE ARQUIVOS REMOVIDOS" | Out-File "\\172.19.51.95\Teste\Logs\Relatorio-$date.csv"
+
+foreach ($linha in $Lista) {
+    $linha.FullName | Out-File "\\172.19.51.95\Teste\Logs\Relatorio-$date.csv" -Append
+    
+    $linha | remove-item -force -r | Out-Null
+}
+
+$smtp = "netmail.crediminas.com.br"
+$to = "guilherme.correa@sicoobcredipinho.com.br"
+$from = "guilherme.correa@sicoobcredipinho.com.br"
+$subject = "Lista de arquivos apagados"
+
+Send-MailMessage -SmtpServer $smtp -To $to -From $from -Subject $subject -Attachments "\\172.19.51.95\Teste\Logs\Relatorio-$date.csv"
